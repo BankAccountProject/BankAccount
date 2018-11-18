@@ -10,8 +10,17 @@ namespace BankAccount.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly BankAccountContext _context;
+
+        public HomeController(BankAccountContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult Index()
         {
+            List<UserTransaction> UserTransactions= _context.UserTransaction.ToList<UserTransaction>();
+
             return View();
         }
 
