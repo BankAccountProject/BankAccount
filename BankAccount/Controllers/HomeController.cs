@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BankAccount.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Data.SqlClient;
 
 namespace BankAccount.Controllers
 {
@@ -19,8 +21,6 @@ namespace BankAccount.Controllers
 
         public IActionResult Index()
         {
-            List<UserTransaction> UserTransactions= _context.UserTransaction.ToList<UserTransaction>();
-
             return View();
         }
 

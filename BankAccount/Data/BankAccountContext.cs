@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
@@ -17,6 +20,124 @@ namespace BankAccount.Models
             : base(options)
         {
         }
+
+
+
+        public void test()
+        {
+            var UserTransactions2 = this.UserTransaction
+                .FromSql("exec dbo.GetTransactionById 10")
+                .ToList();
+
+            var Client = this.Client
+                .FromSql("exec dbo.GetClientById 10")
+                .ToList();
+
+            var ClientDetail = this.ClientDetail
+               .FromSql("exec dbo.GetClientById 10")
+               .ToList();
+        }
+
+        public Client GetClientById(int id)
+        {
+            var ID = new SqlParameter("ID", id);
+
+            Client Client = this.Client
+                .FromSql("exec dbo.GetClientById @ID", ID)
+                .First();
+
+            ClientDetail ClientDetail = this.ClientDetail
+               .FromSql("exec dbo.GetClientById @ID", ID)
+               .First();
+
+            return Client;
+        }
+
+        public Client GetClientByLoginPassword(string login, string password)
+        {
+            var Login = new SqlParameter("login", login);
+            var Password = new SqlParameter("password", password);
+
+            Client Client = this.Client
+                .FromSql("exec dbo.GetClientByLoginPassword @login @password", Login, Password)
+                .First();
+
+            ClientDetail ClientDetail = this.ClientDetail
+               .FromSql("exec dbo.GetClientByLoginPassword @ID", Login, Password)
+               .First();
+
+            return Client;
+        }
+
+        public Employee GetEmployeeById(int id)
+        {
+            var ID = new SqlParameter("ID", id);
+
+            Employee Employee = this.Employee
+                .FromSql("exec dbo.GetEmployeeById @ID", ID)
+                .First();
+
+            return Employee;
+        }
+
+        public Employee GetEmployeeByLoginPassword(string login, string password)
+        {
+            var Login = new SqlParameter("login", login);
+            var Password = new SqlParameter("password", password);
+
+            Employee Employee = this.Employee
+                .FromSql("exec dbo.GetEmployeeByLoginPassword @login @password", Login, Password)
+                .First();
+
+            return Employee;
+        }
+
+        public UserTransaction GetTransactionById(int id)
+        {
+            var ID = new SqlParameter("ID", id);
+
+            UserTransaction UserTransaction = this.UserTransaction
+                .FromSql("exec dbo.GetTransactionById @ID", ID)
+                .First();
+
+            return UserTransaction;
+        }
+
+        public List<UserTransaction> GetTransactionByClientId(int id)
+        {
+            var ID = new SqlParameter("ID", id);
+
+            List<UserTransaction> UserTransactions = this.UserTransaction
+                .FromSql("exec dbo.GetTransactionByClientId @ID", ID)
+                .ToList();
+
+            return UserTransactions;
+        }
+
+        public List<UserTransaction> GetTransactionByRecipientId(int id)
+        {
+            var ID = new SqlParameter("ID", id);
+
+            List<UserTransaction> UserTransactions = this.UserTransaction
+                .FromSql("exec dbo.GetTransactionByRecipientId @ID", ID)
+                .ToList();
+
+            return UserTransactions;
+        }
+
+        public List<UserTransaction> GetTransactionBySenderId(int id)
+        {
+            var ID = new SqlParameter("ID", id);
+
+            List<UserTransaction> UserTransactions = this.UserTransaction
+                .FromSql("exec dbo.GetTransactionBySenderId @ID", ID)
+                .ToList();
+
+            return UserTransactions;
+        }
+
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
