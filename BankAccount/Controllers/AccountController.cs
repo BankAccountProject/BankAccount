@@ -1,5 +1,7 @@
 ﻿using BankAccount.Models;
 using BankAccount.Models.Dtos;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,7 @@ namespace BankAccount.Controllers
     public class AccountController: Controller
     {
         private readonly BankAccountContext _context;
+
         public AccountController(BankAccountContext context)
         {
             _context = context;
@@ -21,16 +24,20 @@ namespace BankAccount.Controllers
         {
             return View();
         }
-        
-        public IActionResult LoggedIn(LoginViewModel login)
+
+        [HttpPost]
+        //public IActionResult LoggedIn(LoginViewModel login)
+        public IActionResult LoggedIn(string login, string password)
         {
             if (!ModelState.IsValid)
             {
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+
                 ModelState.AddModelError(string.Empty, "Something went wrong");
                 return View("Login");
             }
 
-            var client = _context.GetClientByLoginPassword(login.Login, login.Password);
+            var client = _context.GetClientByLoginPassword(login, password);
 
             if (client != null)
                 return RedirectToAction("AllTransactionByClientId", "BankAccount");

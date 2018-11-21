@@ -60,9 +60,9 @@ namespace BankAccount.Models
             Client Client = this.Client
                 .FromSql("exec dbo.GetClientByLoginPassword @login, @password", Login, Password)
                 .First();
-
+            var Id = new SqlParameter("ID", Client.ClientId);
             ClientDetail ClientDetail = this.ClientDetail
-               .FromSql("exec dbo.GetClientByLoginPassword @ID", Login, Password)
+               .FromSql("exec dbo.GetClientById @ID", Id)
                .First();
 
             return Client;
