@@ -1,0 +1,52 @@
+﻿@model List<UserTransaction>
+@{
+    ViewData["Title"] = "AllTransactionByClientId";
+}
+
+<h2>All Transactions By ClientId</h2>
+
+<!--@Html.ActionLink("Wykonaj przelew", "CreateSchool", "BankAccount")-->
+<button class="btn btn-success" onclick="location.href='@Url.Action("CreateTransaction", "BankAccount")';return false;'><span class="glyphicon glyphicon-plus"></span>Wykonaj przelew</button>
+
+
+@if (Model.Count() > 0)
+{
+    <table class="table table-hover">
+        <thead>
+        <th>Id Transakcji</th>
+        <th>Id Wysyłającego</th>
+        <th>Id Odbiorcy</th>
+        <th>Data wykonania</th>
+        <th>Tytuł</th>
+        <th>Status</th>
+        <th>Kwota</th>
+
+        </thead>
+        <tbody>
+            @foreach (UserTransaction transaction in Model)
+            {
+                <tr>
+                    <td>@transaction.TransactionId</td>
+                    <td>@transaction.SenderId</td>
+                    <td>@transaction.RecipientId</td>
+                    <td>@transaction.ExecutionDate.ToString("yyyy-MM-dd")</td>
+                    <td>@transaction.Title</td>
+                    <td>@transaction.Status</td>
+                    <td>@transaction.Amount</td>
+
+                    @if (true)
+                    {
+
+                        <td>@Html.ActionLink("Details", "TransactionDetails", "BankAccount", new { @id = transaction.TransactionId })</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="text-center alert-info">
+        <h1>Brak transakcji.</h1>
+    </div>
+}

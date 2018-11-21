@@ -1,0 +1,10 @@
+﻿@model UserTransaction
+@{
+    ViewData["Title"] = "TransactionDetails";
+}
+
+<h2>Transaction Details</h2>
+
+<p>Id transakcji: @Model.TransactionId</p>
+<p>Id wysyłającego: @Model.SenderId</p>
+<p>Id odbiorcy: @Model.RecipientId</p>
