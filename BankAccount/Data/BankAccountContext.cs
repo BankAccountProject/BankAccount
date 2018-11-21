@@ -21,21 +21,20 @@ namespace BankAccount.Models
         {
         }
 
-
-
-        public void test()
+        public void ActivateClientById(int clientId)
         {
-            var UserTransactions2 = this.UserTransaction
-                .FromSql("exec dbo.GetTransactionById 10")
-                .ToList();
+            var ClientId = new SqlParameter("clientId", clientId);
+            this.Database.ExecuteSqlCommand("dbo.ActivateClientById @clientId",
+                              ClientId);
+            return;
+        }
 
-            var Client = this.Client
-                .FromSql("exec dbo.GetClientById 10")
-                .ToList();
-
-            var ClientDetail = this.ClientDetail
-               .FromSql("exec dbo.GetClientById 10")
-               .ToList();
+        public void DeactivateClientById(int clientId)
+        {
+            var ClientId = new SqlParameter("clientId", clientId);
+            this.Database.ExecuteSqlCommand("dbo.DeactivateClientById @clientId",
+                              ClientId);
+            return;
         }
 
         public Client GetClientById(int id)
@@ -59,7 +58,7 @@ namespace BankAccount.Models
             var Password = new SqlParameter("password", password);
 
             Client Client = this.Client
-                .FromSql("exec dbo.GetClientByLoginPassword @login @password", Login, Password)
+                .FromSql("exec dbo.GetClientByLoginPassword @login, @password", Login, Password)
                 .First();
 
             ClientDetail ClientDetail = this.ClientDetail
@@ -86,7 +85,7 @@ namespace BankAccount.Models
             var Password = new SqlParameter("password", password);
 
             Employee Employee = this.Employee
-                .FromSql("exec dbo.GetEmployeeByLoginPassword @login @password", Login, Password)
+                .FromSql("exec dbo.GetEmployeeByLoginPassword @login, @password", Login, Password)
                 .First();
 
             return Employee;
@@ -136,6 +135,135 @@ namespace BankAccount.Models
             return UserTransactions;
         }
 
+        public void NewAddressBook(int ownerId, int inscribedId, string description)
+        {
+            var OwnerId = new SqlParameter("ownerId", ownerId);
+            var InscribedId = new SqlParameter("inscribedId", inscribedId);
+            var Description = new SqlParameter("description", description);
+            this.Database.ExecuteSqlCommand("exec dbo.NewAddressBook @ownerId, @inscribedId, @description",
+                              OwnerId, InscribedId, Description);
+        }
+
+        public void NewClient(string permisions, string accountNumber, decimal accountBalance, decimal interest, string login, string password, bool active)
+        {
+            var Permisions = new SqlParameter("permisions", permisions);
+            var AccountNumber = new SqlParameter("accountNumber", accountNumber);
+            var AccountBalance = new SqlParameter("accountBalance", accountBalance);
+            var Interest = new SqlParameter("interest", interest);
+            var Login = new SqlParameter("login", login);
+            var Password = new SqlParameter("password", password);
+            var Active = new SqlParameter("active", active);
+            this.Database.ExecuteSqlCommand("dbo.NewClient @permisions, @accountNumber, @accountBalance, @interest, @login, @password, @active",
+                              Permisions, AccountNumber, AccountBalance, Interest, Login, Password, Active);
+            return;
+        }
+
+        public void NewClientDetail(int clientId, string firstName, string lastName, DateTime dateOfBirth, string pesel, string idNumber, string phoneNumber)
+        {
+            var ClientId = new SqlParameter("clientId", clientId);
+            var FirstName = new SqlParameter("firstName", firstName);
+            var LastName = new SqlParameter("lastName", lastName);
+            var DateOfBirth = new SqlParameter("dateOfBirth", dateOfBirth);
+            var Pesel = new SqlParameter("pesel", pesel);
+            var IdNumber = new SqlParameter("idNumber", idNumber);
+            var PhoneNumber = new SqlParameter("phoneNumber", phoneNumber);
+            this.Database.ExecuteSqlCommand("dbo.NewClient @clientId, @firstName, @lastName, @dateOfBirth, @pesel, @idNumber, @phoneNumber",
+                              ClientId, FirstName, LastName, DateOfBirth, Pesel, IdNumber, PhoneNumber);
+            return;
+        }
+
+        public void NewTransaction(int senderId, int recipientId, decimal amount, DateTime executionDate, string title, string status)
+        {
+            var SenderId = new SqlParameter("senderId", senderId);
+            var RecipientId = new SqlParameter("recipientId", recipientId);
+            var Amount = new SqlParameter("amount", amount);
+            var ExecutionDate = new SqlParameter("executionDate", executionDate);
+            var Title = new SqlParameter("title", title);
+            var Status = new SqlParameter("status", status);
+            this.Database.ExecuteSqlCommand("dbo.NewTransaction @senderId, @recipientId, @amount, @executionDate, @title, @status",
+                              SenderId, RecipientId, Amount, ExecutionDate, Title, Status);
+            return;
+        }
+
+        public void UpdateClientDateOfBirth(int clientId, DateTime dateOfBirth)
+        {
+            var ClientId = new SqlParameter("clientId", clientId);
+            var DateOfBirth = new SqlParameter("dateOfBirth", dateOfBirth);
+
+            this.Database.ExecuteSqlCommand("dbo.UpdateClientDateOfBirth @clientId, @dateOfBirth",
+                              ClientId, DateOfBirth);
+            return;
+        }
+
+        public void UpdateClientDetail(int clientId, string lastName, DateTime dateOfBirth, string pesel, string phoneNumber)
+        {
+            var ClientId = new SqlParameter("clientId", clientId);
+            var LastName = new SqlParameter("lastName", lastName);
+            var DateOfBirth = new SqlParameter("dateOfBirth", dateOfBirth);
+            var Pesel = new SqlParameter("pesel", pesel);
+            var PhoneNumber = new SqlParameter("phoneNumber", phoneNumber);
+            this.Database.ExecuteSqlCommand("dbo.UpdateClientDetail @clientId, @lastName, @dateOfBirth, @pesel, @phoneNumber",
+                              ClientId, LastName, DateOfBirth, Pesel, PhoneNumber);
+            return;
+        }
+
+        public void UpdateClientDetailFirstName(int clientId, string firstName)
+        {
+            var ClientId = new SqlParameter("clientId", clientId);
+            var FirstName = new SqlParameter("firstName", firstName);
+            
+            this.Database.ExecuteSqlCommand("dbo.UpdateClientDetailFirstName @clientId, @firstName",
+                              ClientId, FirstName);
+            return;
+        }
+
+        public void UpdateClientDetailLastName(int clientId, string lastName)
+        {
+            var ClientId = new SqlParameter("clientId", clientId);
+            var LastName = new SqlParameter("lastName", lastName);
+
+            this.Database.ExecuteSqlCommand("dbo.UpdateClientDetailLastName @clientId, @lastName",
+                              ClientId, LastName);
+            return;
+        }
+
+        public void UpdateClientPasswordById(int clientId, string newPassword)
+        {
+            var ClientId = new SqlParameter("clientId", clientId);
+            var NewPassword = new SqlParameter("newPassword", newPassword);
+
+            this.Database.ExecuteSqlCommand("dbo.UpdateClientPasswordById @clientId, @newPassword",
+                              ClientId, NewPassword);
+            return;
+        }
+
+        public void UpdateClientPasswordByLogin(string login, string newPassword)
+        {
+            var Login = new SqlParameter("login", login);
+            var NewPassword = new SqlParameter("newPassword", newPassword);
+
+            this.Database.ExecuteSqlCommand("dbo.UpdateClientPasswordByLogin @login, @newPassword",
+                              Login, NewPassword);
+            return;
+        }
+
+        public void UpdateClientPesel(int clientId, string pesel)
+        {
+            var ClientId = new SqlParameter("clientId", clientId);
+            var Pesel = new SqlParameter("pesel", pesel);
+            this.Database.ExecuteSqlCommand("dbo.UpdateClientPesel @clientId, @pesel",
+                              ClientId, Pesel);
+            return;
+        }
+
+        public void UpdateClientPhoneNumber(int clientId, string phoneNumber)
+        {
+            var ClientId = new SqlParameter("clientId", clientId);
+            var PhoneNumber = new SqlParameter("phoneNumber", phoneNumber);
+            this.Database.ExecuteSqlCommand("dbo.UpdateClientPhoneNumber @clientId, @phoneNumber",
+                              ClientId, PhoneNumber);
+            return;
+        }
 
 
 
