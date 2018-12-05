@@ -4,7 +4,7 @@ using Xunit;
 
 namespace XUnitTestProject1
 {
-    public class UnitTest1
+    public class DatabaseHelperTest
     {
         [Theory]
         [InlineData("password", "password")]
@@ -23,8 +23,8 @@ namespace XUnitTestProject1
         }
 
         [Theory]
-        [InlineData("2000 0001 2345 6789 1234 4550")]
-        [InlineData("200000012345678912344550")]
+        [InlineData("99 2000 0001 2345 6789 1234 4550")]
+        [InlineData("99200000012345678912344550")]
         public void Passing_Check_Number_Of_Digits(string accountNumber)
         {
             // Act
@@ -35,8 +35,8 @@ namespace XUnitTestProject1
         }
 
         [Theory]
-        [InlineData("2000 0001 2345 6789 1234 4550")]
-        [InlineData("200000012345678912344550")]
+        [InlineData("99 2000 0001 2345 6789 1234 4550")]
+        [InlineData("99200000012345678912344550")]
         public void Passing_Check_Bank_Account_If_Number(string accountNumber)
         {
             // Act
@@ -64,13 +64,13 @@ namespace XUnitTestProject1
         public void Not_Passing_Check_Bank_Account_If_Number()
         {
             // Arrange 
-            string accountNumber = "2000 0001 2345 6789 1234 455g";
+            string accountNumber = "99 2000 0001 2345 6789 1234 455g";
 
             // Act
             bool result = DatabaseHelper.CheckBankAccountIfNumber(accountNumber);
 
             // Assert
-            Assert.True(result);
+            Assert.False(result);
         }
     }
 }

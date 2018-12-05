@@ -1,4 +1,5 @@
-﻿using BankAccount.Models;
+﻿using BankAccount.Helpers;
+using BankAccount.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace BankAccount.Controllers
     {
         private readonly BankAccountContext _context;
         private Client client;
+
         public BankAccountController(BankAccountContext context)
         {
             _context = context;
@@ -27,6 +29,47 @@ namespace BankAccount.Controllers
         {
 
             return View(_context.GetTransactionById(id));
+        }
+
+        [Route("/NewTransaction")]
+        public IActionResult NewTransaction(UserTransaction userTransaction)
+        {
+            if (userTransaction.Recipient != null)
+            {
+                var accountNumber = userTransaction.Recipient.AccountNumber;
+                Client recipient = _context.GetClientByAccountNumber(accountNumber);
+                int senderId = client.ClientId;
+                int recipientId = recipient.ClientId;
+
+                decimal amount = userTransaction.Amount;
+                DateTime executionDate = DateTime.Now;
+                string title = userTransaction.Title;
+                string status = "Sent";
+
+                if (DatabaseHelper.CheckBankAccountIfNumber(accountNumber) )
+                { 
+                    try
+                    {
+                        _context.NewTransaction(senderId, recipientId, amount, executionDate, title, status);
+                        ModelState.Clear();
+                        ViewBag.statusType = "alert-success";
+                        ViewBag.statusInfo = "Poprawnie wysłano przelew";
+                    } catch (Exception e)
+                    {
+                        ViewBag.statusType = "alert-danger";
+                        ViewBag.statusInfo = "Błąd, nie wysłano przelewu";
+                    }
+                    
+                    
+                } else
+                {
+                    ViewBag.statusType = "alert-warning";
+                    ViewBag.statusInfo = "Zły numer konta";
+                }
+            }
+            
+            ViewBag.addressBooks = _context.GetAddressBookByOwnerId(client.ClientId);
+            return View();
         }
     }
 }

@@ -49,10 +49,10 @@ namespace BankAccount.Controllers
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            
+
             return RedirectToAction("Index", "Home");
         }
-        
+
         public ViewResult Register()
         {
             return View();

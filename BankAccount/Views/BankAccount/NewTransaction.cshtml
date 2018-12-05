@@ -1,0 +1,91 @@
+﻿@model BankAccount.Models.UserTransaction
+
+@{
+    ViewData["Title"] = "Przelew";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Wykonaj nowy przelew</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="NewTransaction">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if(ViewBag.statusType != null)
+            {
+            <div class="alert @ViewBag.statusType alert-dismissible" role="alert">
+                <strong>@ViewBag.statusInfo</strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            }
+            
+
+            <div class="form-group">
+                <label asp-for="Recipient.AccountNumber" class="control-label">Numer konta</label>
+                <input asp-for="Recipient.AccountNumber" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label">Tytuł przelewu</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Amount" class="control-label">Kwota</label>
+                <input type="number" min="0,01" asp-for="Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Wyślij" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-4">
+        <table class="table table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th>Numer konta</th>
+                    <th>Nazwa kontaktu</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (AddressBook addressBook in ViewBag.addressBooks)
+                 {
+                <tr>
+                    <td>@addressBook.Inscribed.AccountNumber</td>
+                    <td>@addressBook.Description</td>
+                    <th><button class="btn btn-info buttonAddress" id="@(addressBook.Id)" value="@addressBook.Inscribed.AccountNumber"><span class="glyphicon glyphicon-arrow-left"></span></button></th>
+
+
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div>
+    <a asp-action="AllTransactionByClientId">Powrót</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+
+<script>
+    var buttons = document.getElementsByClassName("buttonAddress");
+
+    for (var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener("click", function () {
+            var accountNumberInput = document.getElementById("Recipient_AccountNumber");
+            accountNumberInput.value = this.value;
+    
+        });
+    }
+</script>

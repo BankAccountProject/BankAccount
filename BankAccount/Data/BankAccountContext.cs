@@ -68,6 +68,23 @@ namespace BankAccount.Models
             return Client;
         }
 
+        public Client GetClientByAccountNumber(string accountNumber)
+        {
+            var AccountNumber = new SqlParameter("accountNumber", accountNumber);
+     
+
+            Client Client = this.Client
+                .FromSql("exec dbo.GetClientByAccountNumber @accountNumber", AccountNumber)
+                .First();
+            var Id = new SqlParameter("ID", Client.ClientId);
+            ClientDetail ClientDetail = this.ClientDetail
+               .FromSql("exec dbo.GetClientById @ID", Id)
+               .First();
+
+            return Client;
+        }
+        
+
         public Employee GetEmployeeById(int id)
         {
             var ID = new SqlParameter("ID", id);
@@ -110,6 +127,15 @@ namespace BankAccount.Models
                 .FromSql("exec dbo.GetTransactionByClientId @ID", ID)
                 .ToList();
 
+            foreach (var UserTransaction in UserTransactions)
+            {
+                Client recipient = GetClientById(UserTransaction.RecipientId);
+                UserTransaction.Recipient = recipient;
+
+                Client sender = GetClientById(UserTransaction.SenderId);
+                UserTransaction.Sender = sender;
+            }
+
             return UserTransactions;
         }
 
@@ -133,6 +159,23 @@ namespace BankAccount.Models
                 .ToList();
 
             return UserTransactions;
+        }
+
+        public List<AddressBook> GetAddressBookByOwnerId(int id)
+        {
+            var ID = new SqlParameter("ID", id);
+
+            List<AddressBook> AddressBooks = this.AddressBook
+                .FromSql("exec dbo.GetAddressBookByOwnerId @ID", ID)
+                .ToList();
+
+            foreach(var addressBook in AddressBooks)
+            {
+                Client client = GetClientById(addressBook.InscribedId);
+                addressBook.Inscribed = client;
+            }
+
+            return AddressBooks;
         }
 
         public void NewAddressBook(int ownerId, int inscribedId, string description)

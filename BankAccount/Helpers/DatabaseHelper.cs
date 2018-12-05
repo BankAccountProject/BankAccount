@@ -40,7 +40,7 @@ namespace BankAccount.Helpers
             // a-z V A-Z, 0-9, symbol-ASCII
             bool result = password.Any(c => char.IsLetter(c)) &&
                           password.Any(c => char.IsDigit(c)) &&
-                          password.Any(c => char.IsSymbol(c));
+                          ( password.Any(c => char.IsSymbol(c)) || password.Any(c => char.IsPunctuation(c)));
             return result;
         }
 
